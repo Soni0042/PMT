@@ -26,22 +26,26 @@ export default function StatusBoard() {
 
   return (
     <div>
-      <h2 className="font-bold text-2xl mb-5">Project Status Board</h2>
-      <div className="flex gap-6 items-start overflow-x-auto">
+      <h2 className="font-bold text-2xl mb-7 text-left">Project Status Board</h2>
+      <div className="flex gap-7 items-start overflow-x-auto pb-3">
         {projectsByStatus.map(group => (
-          <div key={group.status} className="min-w-[260px] p-4 bg-gray-50 rounded-lg shadow">
-            <h3 className="text-center font-semibold mb-3">{group.status}</h3>
+          <div key={group.status} className="min-w-[270px] max-w-xs w-full bg-gray-50 border border-gray-200 rounded-2xl shadow-md p-4 flex flex-col">
+            <h3 className="text-center font-semibold text-lg mb-5 text-indigo-950 tracking-wide">
+              {group.status}
+            </h3>
             {group.projects.length === 0 ? (
-              <div className="italic text-gray-400">No projects</div>
+              <div className="italic text-gray-400 text-center py-8">No projects</div>
             ) : (
               group.projects.map(proj => (
-                <div key={proj.id} className="bg-white p-3 mb-3 rounded shadow border-l-4 border-indigo-400">
-                  <div className="font-bold">{proj.name}</div>
-                  <div className="text-sm text-gray-500 mb-2">Dept: {proj.department}</div>
+                <div key={proj.id} className="bg-white mb-5 rounded-xl shadow-lg border-l-4 border-indigo-500 p-4 flex flex-col">
+                  <div className="font-bold text-indigo-800 text-base mb-1">{proj.name}</div>
+                  <div className="flex justify-between items-center mb-2 text-xs text-gray-500">
+                    <span>Dept: {proj.department}</span>
+                  </div>
                   <select
                     value={proj.status}
                     onChange={e => handleStatusChange(proj.id, e.target.value)}
-                    className="border border-gray-300 rounded px-2 py-1"
+                    className="border border-gray-200 rounded px-2 py-1 text-indigo-900 mt-1 focus:outline-indigo-400 transition"
                   >
                     {STATUS_OPTIONS.map(s =>
                       <option value={s} key={s}>{s}</option>

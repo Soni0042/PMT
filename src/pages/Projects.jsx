@@ -1,6 +1,6 @@
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useState } from "react";
-import ProjectForm from '../components/ProjectForm'; // <--- Only this, NOT the old function
+import ProjectForm from '../components/ProjectForm';
 
 export default function Projects() {
   const [projects, setProjects] = useLocalStorage("pm_projects", []);
@@ -27,29 +27,70 @@ export default function Projects() {
 
   return (
     <div>
-      <h2 className="font-bold text-2xl mb-5">Projects</h2>
-      <ProjectForm onAddProject={handleAddOrUpdate} initial={editingProject}/>
-      <ul className="space-y-4">
-        {projects.length === 0 && <li>No projects yet.</li>}
+      <h2 className="font-bold text-2xl mb-8 text-left">Projects</h2>
+      <div className="mb-8">
+        <ProjectForm onAddProject={handleAddOrUpdate} initial={editingProject}/>
+      </div>
+      <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-3">
+        {projects.length === 0 && (
+          <div className="col-span-full text-gray-400 italic text-center py-10 bg-white rounded-xl shadow">
+            No projects yet.
+          </div>
+        )}
         {projects.map((proj) => (
-          <li key={proj.id} className="bg-white shadow rounded-lg p-4 flex flex-col gap-2 border-l-4 border-indigo-500">
-            <div className="flex justify-between items-center">
-              <span className="font-bold text-lg">{proj.name}</span>
-              <span className="px-2 py-1 rounded text-xs bg-indigo-100 text-indigo-700">{proj.status}</span>
+          <div
+            key={proj.id}
+            className="bg-white shadow-lg rounded-2xl p-6 flex flex-col gap-4 border-l-8 border-indigo-500 transition hover:shadow-2xl"
+          >
+            <div className="flex justify-between items-center mb-1">
+              <span className="font-extrabold text-lg text-indigo-900">{proj.name}</span>
+              <span className="px-3 py-1 rounded-md text-xs bg-indigo-100 text-indigo-700 font-semibold uppercase tracking-wide">
+                {proj.status}
+              </span>
             </div>
-            <div className="text-gray-600 text-sm">{proj.description}</div>
-            <div className="gap-2 flex flex-wrap text-sm text-gray-400">
-              <span>Department: {proj.department}</span>
-              <span>Sponsor: {proj.sponsor || '-'}</span>
-              <span>Duration: {proj.durationStart ? proj.durationStart : "?"} - {proj.durationEnd ? proj.durationEnd : "?"}</span>
+            <div className="text-gray-700 text-sm mb-2">{proj.description}</div>
+            <div className="gap-3 flex flex-wrap text-xs text-gray-500 mb-1">
+              <span><strong>Department:</strong> {proj.department}</span>
+              <span><strong>Sponsor:</strong> {proj.sponsor || '-'}</span>
+              <span><strong>Duration:</strong> {proj.durationStart ? proj.durationStart : "?"} – {proj.durationEnd ? proj.durationEnd : "?"}</span>
             </div>
-            <div className="flex gap-3 justify-end mt-1">
-              <button className="text-indigo-600 hover:underline text-sm" onClick={() => handleEdit(proj.id)}>Edit</button>
-              <button className="text-red-500 hover:underline text-sm" onClick={() => handleDelete(proj.id)}>Delete</button>
+            {proj.attachments && proj.attachments.length > 0 && (
+              <div className="mt-1">
+                <div className="font-semibold text-xs mb-1 text-indigo-700">Attachments:</div>
+                <ul>
+                  {proj.attachments.map((file, idx) => (
+                    <li key={file.name+idx}>
+                      <a
+                        href={file.data}
+                        download={file.name}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-600 underline text-xs"
+                      >
+                        {file.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <div className="flex gap-4 justify-end mt-3">
+              <button
+                className="px-4 py-1 rounded font-semibold text-indigo-600 border border-indigo-200 hover:bg-indigo-50 hover:text-indigo-800 text-xs transition"
+                onClick={() => handleEdit(proj.id)}
+              >
+                Edit
+              </button>
+              <button
+                className="px-4 py-1 rounded font-semibold text-red-600 border border-red-200 hover:bg-red-50 hover:text-red-800 text-xs transition"
+                onClick={() => handleDelete(proj.id)}
+              >
+                Delete
+              </button>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

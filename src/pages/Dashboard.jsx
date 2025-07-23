@@ -1,5 +1,3 @@
-// src/pages/Dashboard.jsx
-
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from "chart.js";
@@ -29,6 +27,9 @@ export default function Dashboard() {
         label: "Tasks",
         data: statusData,
         backgroundColor: "#6366f1",
+        borderRadius: 6,
+        barPercentage: 0.7,
+        categoryPercentage: 0.6,
       },
     ],
   };
@@ -51,69 +52,103 @@ export default function Dashboard() {
           "#10b981",
           "#f472b6",
           "#ef4444",
+          "#8b5cf6",
         ],
       },
     ],
   };
 
   return (
-    <div className="p-2 md:p-4">
-      <h2 className="text-2xl font-bold mb-7">Analytics Dashboard</h2>
-      {/* Dashboard Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-        <div className="bg-indigo-50 p-4 rounded text-center shadow">
-          <div className="text-3xl font-bold text-indigo-700">{projectsCount}</div>
-          <div className="text-gray-600 mt-1">Projects</div>
+    <div className="p-2 md:p-6 max-w-7xl mx-auto">
+      <h2 className="text-3xl font-extrabold mb-10 text-left tracking-tight">Analytics Dashboard</h2>
+
+      {/* KPI CARDS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+        <KpiCard value={projectsCount} label="Projects" color="indigo" />
+        <KpiCard value={tasksCount} label="Tasks" color="green" />
+        <KpiCard value={resourcesCount} label="Resources" color="blue" />
+      </div>
+
+      {/* CHARTS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-10">
+        <div className="bg-white p-7 rounded-2xl shadow-xl flex flex-col items-center">
+          <div className="font-semibold mb-3 text-lg text-indigo-900">Tasks by Status</div>
+          <div className="w-full" style={{ minHeight: 250 }}>
+            <Bar
+              data={barData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: { display: false },
+                },
+                scales: {
+                  x: { grid: { display: false } },
+                  y: { beginAtZero: true },
+                },
+              }}
+            />
+          </div>
         </div>
-        <div className="bg-green-50 p-4 rounded text-center shadow">
-          <div className="text-3xl font-bold text-green-700">{tasksCount}</div>
-          <div className="text-gray-600 mt-1">Tasks</div>
-        </div>
-        <div className="bg-blue-50 p-4 rounded text-center shadow">
-          <div className="text-3xl font-bold text-blue-700">{resourcesCount}</div>
-          <div className="text-gray-600 mt-1">Resources</div>
+        <div className="bg-white p-7 rounded-2xl shadow-xl flex flex-col items-center">
+          <div className="font-semibold mb-3 text-lg text-indigo-900">Projects by Department</div>
+          <div className="w-full" style={{ minHeight: 250 }}>
+            <Pie
+              data={pieData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: { position: "bottom" },
+                },
+              }}
+            />
+          </div>
         </div>
       </div>
-      {/* Analytics Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-        <div className="bg-white p-5 rounded shadow">
-          <div className="font-semibold mb-2">Tasks by Status</div>
-          <Bar data={barData} options={{ responsive: true }} />
-        </div>
-        <div className="bg-white p-5 rounded shadow">
-          <div className="font-semibold mb-2">Projects by Department</div>
-          <Pie data={pieData} options={{ responsive: true }} />
-        </div>
-      </div>
-      {/* CSV EXPORT */}
+
       <ExportSection projects={projects} tasks={tasks} resources={resources} />
+    </div>
+  );
+}
+
+function KpiCard({ value, label, color }) {
+  const colorMap = {
+    indigo: "text-indigo-700 bg-indigo-50",
+    green: "text-green-700 bg-green-50",
+    blue: "text-blue-700 bg-blue-50",
+  };
+  return (
+    <div className={`rounded-2xl shadow-lg flex flex-col items-center py-8 ${colorMap[color]}`}>
+      <div className={`text-5xl font-extrabold mb-2`}>
+        {value}
+      </div>
+      <div className="text-lg uppercase font-bold tracking-wide">{label}</div>
     </div>
   );
 }
 
 function ExportSection({ projects, tasks, resources }) {
   return (
-    <div className="bg-gray-50 rounded-lg shadow p-5">
-      <h3 className="font-semibold mb-3">Export Data as CSV</h3>
-      <div className="flex flex-wrap gap-4">
+    <div className="bg-gray-50 rounded-2xl shadow p-8 max-w-2xl mx-auto">
+      <h3 className="font-semibold mb-3 text-lg text-indigo-900">Export Data as CSV</h3>
+      <div className="flex flex-wrap gap-6">
         <CSVLink
           data={projects}
           filename="projects.csv"
-          className="inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+          className="inline-block bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition shadow"
         >
           Export Projects
         </CSVLink>
         <CSVLink
           data={tasks}
           filename="tasks.csv"
-          className="inline-block bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+          className="inline-block bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition shadow"
         >
           Export Tasks
         </CSVLink>
         <CSVLink
           data={resources}
           filename="resources.csv"
-          className="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+          className="inline-block bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition shadow"
         >
           Export Resources
         </CSVLink>

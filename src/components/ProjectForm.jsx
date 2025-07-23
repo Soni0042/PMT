@@ -39,16 +39,13 @@ export default function ProjectForm({ onAddProject, initial }) {
       };
       reader.readAsDataURL(file);
     });
-    // Reset the file input value so you can pick the same file again if needed
     e.target.value = null;
   };
 
-  // Remove new files before submit
   const handleRemoveAttachment = (idx) => {
     setNewAttachments(arr => arr.filter((_, i) => i !== idx));
   };
 
-  // Remove already-saved attachments in edit mode
   const handleRemoveExistingAttachment = (idx) => {
     setForm(f => ({
       ...f,
@@ -56,7 +53,6 @@ export default function ProjectForm({ onAddProject, initial }) {
     }));
   };
 
-  // On submit: merge attachments, call parent handler, clear form
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.name.trim() || !form.department.trim()) {
@@ -77,10 +73,10 @@ export default function ProjectForm({ onAddProject, initial }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white border shadow p-5 rounded max-w-xl mx-auto flex flex-col gap-4 mb-8"
+      className="bg-white border shadow-2xl p-7 rounded-2xl max-w-2xl mx-auto flex flex-col gap-6 mb-12"
     >
       <div>
-        <label className="block text-sm font-medium mb-1">Project Name</label>
+        <label className="block text-sm font-semibold text-indigo-900 mb-1">Project Name</label>
         <input
           type="text"
           name="name"
@@ -88,22 +84,22 @@ export default function ProjectForm({ onAddProject, initial }) {
           onChange={handleChange}
           placeholder="Project Name"
           required
-          className="border border-gray-300 rounded px-2 py-1 w-full"
+          className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-indigo-400 transition"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium mb-1">Description</label>
+        <label className="block text-sm font-semibold text-indigo-900 mb-1">Description</label>
         <textarea
           name="description"
           value={form.description}
           onChange={handleChange}
           placeholder="Description"
           rows={3}
-          className="border border-gray-300 rounded px-2 py-1 w-full"
+          className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-indigo-400 transition"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium mb-1">Department</label>
+        <label className="block text-sm font-semibold text-indigo-900 mb-1">Department</label>
         <input
           type="text"
           name="department"
@@ -111,64 +107,64 @@ export default function ProjectForm({ onAddProject, initial }) {
           onChange={handleChange}
           placeholder="Department"
           required
-          className="border border-gray-300 rounded px-2 py-1 w-full"
+          className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-indigo-400 transition"
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Start Date</label>
+          <label className="block text-sm font-semibold text-indigo-900 mb-1">Start Date</label>
           <input
             type="date"
             name="durationStart"
             value={form.durationStart}
             onChange={handleChange}
-            className="border border-gray-300 rounded px-2 py-1 w-full"
+            className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-indigo-400 transition"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">End Date</label>
+          <label className="block text-sm font-semibold text-indigo-900 mb-1">End Date</label>
           <input
             type="date"
             name="durationEnd"
             value={form.durationEnd}
             onChange={handleChange}
-            className="border border-gray-300 rounded px-2 py-1 w-full"
+            className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-indigo-400 transition"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Project Sponsor</label>
+        <label className="block text-sm font-semibold text-indigo-900 mb-1">Project Sponsor</label>
         <input
           type="text"
           name="sponsor"
           value={form.sponsor}
           onChange={handleChange}
           placeholder="Project Sponsor"
-          className="border border-gray-300 rounded px-2 py-1 w-full"
+          className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-indigo-400 transition"
         />
       </div>
 
       {/* ATTACHMENTS */}
       <div>
-        <label className="block text-sm font-medium mb-1">Attachments</label>
+        <label className="block text-sm font-semibold text-indigo-900 mb-1">Attachments</label>
         <input
           type="file"
           multiple
           onChange={handleFileChange}
-          className="block w-full"
+          className="block w-full mt-1"
         />
         {/* New (unsaved) attachments */}
         {newAttachments.length > 0 && (
-          <ul className="mt-2 text-xs">
+          <ul className="mt-3 rounded-lg bg-indigo-50 p-3">
             {newAttachments.map((file, idx) => (
-              <li key={idx} className="flex items-center gap-2">
-                <span>{file.name}</span>
+              <li key={idx} className="flex items-center gap-2 mb-1">
+                <span className="truncate">{file.name}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveAttachment(idx)}
-                  className="text-red-500 underline"
+                  className="text-xs text-red-600 font-bold underline"
                 >Remove</button>
               </li>
             ))}
@@ -176,22 +172,22 @@ export default function ProjectForm({ onAddProject, initial }) {
         )}
         {/* Existing attachments, if editing */}
         {form.attachments && form.attachments.length > 0 && (
-          <ul className="mt-2 text-xs">
+          <ul className="mt-2 rounded-lg bg-indigo-50 p-3">
             {form.attachments.map((file, idx) => (
-              <li key={file.name+idx} className="flex items-center gap-2">
+              <li key={file.name+idx} className="flex items-center gap-2 mb-1">
                 <a
                   href={file.data}
                   download={file.name}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-indigo-600 underline"
+                  className="text-indigo-700 underline text-xs truncate"
                 >
                   {file.name}
                 </a>
                 <button
                   type="button"
                   onClick={() => handleRemoveExistingAttachment(idx)}
-                  className="text-red-500 underline"
+                  className="text-xs text-red-600 font-bold underline"
                 >Remove</button>
               </li>
             ))}
@@ -199,10 +195,10 @@ export default function ProjectForm({ onAddProject, initial }) {
         )}
       </div>
 
-      <div className="flex gap-2 mt-2">
+      <div className="flex gap-4 mt-4">
         <button
           type="submit"
-          className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 font-semibold transition"
+          className="bg-indigo-600 text-white px-8 py-2 rounded-lg hover:bg-indigo-700 font-bold transition"
         >
           {form.id ? "Update Project" : "Add Project"}
         </button>
@@ -210,7 +206,7 @@ export default function ProjectForm({ onAddProject, initial }) {
           <button
             type="button"
             onClick={handleCancel}
-            className="bg-gray-200 text-gray-800 px-6 py-2 rounded hover:bg-gray-300 font-semibold transition"
+            className="bg-gray-200 text-gray-800 px-8 py-2 rounded-lg hover:bg-gray-300 font-bold transition"
           >
             Cancel
           </button>

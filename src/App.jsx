@@ -1,4 +1,3 @@
-// src/App.jsx
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import Projects from './pages/Projects';
@@ -7,20 +6,18 @@ import Tasks from './pages/Tasks';
 import StatusBoard from './pages/StatusBoard';
 import Dashboard from './pages/Dashboard';
 
-
 function App() {
   return (
-    <div style={{ display: 'flex' }}>
+    <div className="flex bg-gray-50 min-h-screen">
       <Sidebar />
       <main style={{ marginLeft: 200, padding: 24, flexGrow: 1 }}>
         <Routes>
           <Route path="/" element={<Navigate to="/projects" />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/resources" element={<Resources />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/status" element={<StatusBoard />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-
         </Routes>
       </main>
     </div>
