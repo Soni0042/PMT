@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-// Add your global skill options here:
+// Skill options and status options
 const SKILL_OPTIONS = [
   "React",
   "Node.js",
@@ -12,16 +12,25 @@ const SKILL_OPTIONS = [
   "Testing",
 ];
 
+const STATUS_OPTIONS = [
+  "Open",
+  "WIP",
+  "Under Development",
+  "Internal UAT",
+  "Completed"
+];
+
 const emptyForm = {
   id: null,
   name: "",
   description: "",
   department: "",
+  status: STATUS_OPTIONS[0],    // Always default to "Open"
   durationStart: "",
   durationEnd: "",
   sponsor: "",
   attachments: [],
-  skillsets: [], // -- as always an array but will have 0 or 1 selected value
+  skillsets: [],                // Storing as array for future-proofing
 };
 
 export default function ProjectForm({ onAddProject, initial }) {
@@ -33,10 +42,11 @@ export default function ProjectForm({ onAddProject, initial }) {
     setNewAttachments([]);
   }, [initial]);
 
+  // Generic handle change
   const handleChange = (e) =>
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
-  // --- Skillset single-select dropdown handler ---
+  // Skillset single-select dropdown handler
   const handleSkillChange = (e) => {
     const value = e.target.value;
     setForm((f) => ({
@@ -45,7 +55,7 @@ export default function ProjectForm({ onAddProject, initial }) {
     }));
   };
 
-  // --- File attachment logic (unchanged) ---
+  // File handling
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     files.forEach((file) => {
@@ -87,6 +97,7 @@ export default function ProjectForm({ onAddProject, initial }) {
       ...form,
       attachments,
       id: form.id || Date.now().toString(),
+      status: form.status || STATUS_OPTIONS[0],         // Always ensure status is set!
     });
     setForm(emptyForm);
     setNewAttachments([]);
@@ -143,6 +154,27 @@ export default function ProjectForm({ onAddProject, initial }) {
           className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-indigo-400 transition"
         />
       </div>
+
+      {/* ------ Status Dropdown ------ */}
+      <div>
+        <label className="block text-sm font-semibold text-indigo-900 mb-1">
+          Status
+        </label>
+        <select
+          name="status"
+          value={form.status}
+          onChange={handleChange}
+          className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-indigo-400 transition"
+          required
+        >
+          {STATUS_OPTIONS.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block text-sm font-semibold text-indigo-900 mb-1">
@@ -169,6 +201,7 @@ export default function ProjectForm({ onAddProject, initial }) {
           />
         </div>
       </div>
+
       <div>
         <label className="block text-sm font-semibold text-indigo-900 mb-1">
           Project Sponsor
@@ -183,7 +216,7 @@ export default function ProjectForm({ onAddProject, initial }) {
         />
       </div>
 
-      {/* --- SKILLSET REQUIRED SINGLE-SELECT DROPDOWN --- */}
+      {/* ------ Skillset Single-Select Dropdown ------ */}
       <div>
         <label className="block text-sm font-semibold text-indigo-900 mb-1">
           Skillset Required
@@ -203,7 +236,7 @@ export default function ProjectForm({ onAddProject, initial }) {
         </select>
       </div>
 
-      {/* --- ATTACHMENTS (unchanged) --- */}
+      {/* ------ Attachments ------ */}
       <div>
         <label className="block text-sm font-semibold text-indigo-900 mb-1">
           Attachments
