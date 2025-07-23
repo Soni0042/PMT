@@ -1,13 +1,12 @@
-// src/components/Sidebar.jsx
-
 import { Link } from 'react-router-dom';
-import './Sidebar.css'; // create this for custom styles
+import './Sidebar.css';
 
 function Sidebar() {
   return (
     <nav className="sidebar">
       <h1>PM Tracker</h1>
       <ul>
+        <li><Link to="/dashboard">Dashboard</Link></li>
         <li><Link to="/projects">Projects</Link></li>
         <li><Link to="/resources">Resources</Link></li>
         <li><Link to="/tasks">Tasks</Link></li>
@@ -16,6 +15,5 @@ function Sidebar() {
     </nav>
   );
 }
-
 
 export default Sidebar;

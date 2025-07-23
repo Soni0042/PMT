@@ -5,6 +5,8 @@ import Projects from './pages/Projects';
 import Resources from './pages/Resources';
 import Tasks from './pages/Tasks';
 import StatusBoard from './pages/StatusBoard';
+import Dashboard from './pages/Dashboard';
+
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
           <Route path="/resources" element={<Resources />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/status" element={<StatusBoard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+
         </Routes>
       </main>
     </div>
@@ -24,4 +28,3 @@ function App() {
 }
 
 export default App;
-    
