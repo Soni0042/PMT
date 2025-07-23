@@ -87,39 +87,45 @@ export default function Tasks() {
   };
 
   // --- Filtering and Search ---
-
   function filterTasks(list) {
     return list
       .filter(t => t.projectId === selectedProject)
       .filter(t => filter.status === "All" || t.status === filter.status)
       .filter(t => t.title.toLowerCase().includes(filter.search.toLowerCase()) || (t.description?.toLowerCase() || "").includes(filter.search.toLowerCase()));
   }
-
   const filteredTasks = filterTasks(tasks);
 
   // --- Sub-task state ---
-
   const [editingSubtask, setEditingSubtask] = useState({ tId: null, stId: null });
   const [editSubtaskForm, setEditSubtaskForm] = useState({});
 
   // ---- Component Render ----
-
   return (
     <div>
-      <h2>Task Tracking</h2>
-      <label>
+      <h2 className="font-bold text-2xl mb-7 text-left">Task Tracking</h2>
+      {/* Project Selector */}
+      <label className="block mb-3 font-semibold text-indigo-900">
         Select Project:&nbsp;
-        <select value={selectedProject} onChange={e => setSelectedProject(e.target.value)}>
+        <select
+          value={selectedProject}
+          onChange={e => setSelectedProject(e.target.value)}
+          className="border border-gray-300 bg-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+        >
           {projects.map((proj) => (
             <option key={proj.id} value={proj.id}>{proj.name}</option>
           ))}
         </select>
       </label>
-      <br /><br />
-      <div style={{display: "flex", gap: 12, flexWrap:"wrap"}}>
-        <label>
+
+      {/* Status Filter and Search */}
+      <div className="flex flex-wrap gap-4 mb-6">
+        <label className="flex items-center gap-2 font-medium">
           Status:
-          <select value={filter.status} onChange={e => setFilter(f => ({ ...f, status: e.target.value }))} style={{ marginLeft: 4 }}>
+          <select
+            value={filter.status}
+            onChange={e => setFilter(f => ({ ...f, status: e.target.value }))}
+            className="border border-gray-300 bg-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+          >
             <option value="All">All</option>
             {STATUS_OPTIONS.map(s => <option value={s} key={s}>{s}</option>)}
           </select>
@@ -129,24 +135,27 @@ export default function Tasks() {
           placeholder="Search tasks"
           value={filter.search}
           onChange={e => setFilter(f => ({ ...f, search: e.target.value }))}
+          className="border border-gray-300 bg-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
         />
       </div>
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      <form onSubmit={handleAddTask} style={{ margin: "1rem 0", background: "#f7f7fa", padding: "0.7rem" }}>
+      {error && <div className="text-red-600 font-medium mb-4">{error}</div>}
+
+      {/* Add Task Form */}
+      <form onSubmit={handleAddTask} className="mb-8 bg-indigo-50 rounded-lg shadow px-6 py-4 flex flex-wrap gap-4 items-end">
         <input
           required
           type="text"
           placeholder="Task Title"
           value={form.title}
           onChange={e => setForm({ ...form, title: e.target.value })}
-          style={{ marginRight: "0.5rem" }}
+          className="border border-gray-300 bg-white rounded px-3 py-2 w-48 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
         />
         <input
           type="text"
           placeholder="Description"
           value={form.description}
           onChange={e => setForm({ ...form, description: e.target.value })}
-          style={{ marginRight: "0.5rem" }}
+          className="border border-gray-300 bg-white rounded px-3 py-2 w-44 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
         />
         <input
           type="number"
@@ -154,7 +163,7 @@ export default function Tasks() {
           value={form.estimated}
           min="0"
           onChange={e => setForm({ ...form, estimated: e.target.value })}
-          style={{ width: "5rem", marginRight: "0.5rem" }}
+          className="border border-gray-300 bg-white rounded px-3 py-2 w-28 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
         />
         <input
           type="number"
@@ -162,42 +171,44 @@ export default function Tasks() {
           value={form.actual}
           min="0"
           onChange={e => setForm({ ...form, actual: e.target.value })}
-          style={{ width: "5rem", marginRight: "0.5rem" }}
+          className="border border-gray-300 bg-white rounded px-3 py-2 w-28 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
         />
-        <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}>
+        <select
+          value={form.status}
+          onChange={e => setForm({ ...form, status: e.target.value })}
+          className="border border-gray-300 bg-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+        >
           {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
-        <button type="submit" style={{ marginLeft: "0.5rem" }}>Add Task</button>
+        <button type="submit" className="bg-indigo-600 text-white font-bold px-5 py-2 rounded hover:bg-indigo-700 transition">
+          Add Task
+        </button>
       </form>
 
-      <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
+      {/* Task List */}
+      <ul className="space-y-6">
         {filteredTasks.length === 0 && <li>No tasks match.</li>}
         {filteredTasks.map((task) => (
           <li
             key={task.id}
-            style={{
-              border: "1px solid #ddd",
-              marginBottom: "1.3rem",
-              padding: "0.7rem",
-              background: editingTaskId === task.id ? "#f8f8f8" : "white"
-            }}
+            className={`border rounded-xl shadow px-5 py-4 bg-white relative ${editingTaskId === task.id ? "ring-2 ring-indigo-400" : ""}`}
           >
             {editingTaskId === task.id ? (
-              <div>
+              <div className="flex flex-wrap gap-3 items-end">
                 <input
                   required
                   type="text"
                   placeholder="Task Title"
                   value={editTaskForm.title}
                   onChange={e => setEditTaskForm({ ...editTaskForm, title: e.target.value })}
-                  style={{ marginRight: "0.5rem" }}
+                  className="border border-gray-300 bg-white rounded px-3 py-2 w-48 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
                 />
                 <input
                   type="text"
                   placeholder="Description"
                   value={editTaskForm.description}
                   onChange={e => setEditTaskForm({ ...editTaskForm, description: e.target.value })}
-                  style={{ marginRight: "0.5rem" }}
+                  className="border border-gray-300 bg-white rounded px-3 py-2 w-44 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
                 />
                 <input
                   type="number"
@@ -205,7 +216,7 @@ export default function Tasks() {
                   value={editTaskForm.estimated}
                   min="0"
                   onChange={e => setEditTaskForm({ ...editTaskForm, estimated: e.target.value })}
-                  style={{ width: "5rem", marginRight: "0.5rem" }}
+                  className="border border-gray-300 bg-white rounded px-3 py-2 w-28 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
                 />
                 <input
                   type="number"
@@ -213,43 +224,40 @@ export default function Tasks() {
                   value={editTaskForm.actual}
                   min="0"
                   onChange={e => setEditTaskForm({ ...editTaskForm, actual: e.target.value })}
-                  style={{ width: "5rem", marginRight: "0.5rem" }}
+                  className="border border-gray-300 bg-white rounded px-3 py-2 w-28 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
                 />
-                <select value={editTaskForm.status} onChange={e => setEditTaskForm({ ...editTaskForm, status: e.target.value })}>
+                <select
+                  value={editTaskForm.status}
+                  onChange={e => setEditTaskForm({ ...editTaskForm, status: e.target.value })}
+                  className="border border-gray-300 bg-white rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+                >
                   {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
-                <button onClick={() => handleSaveTaskEdit(task.id)} style={{ marginLeft: "0.5rem" }}>Save</button>
-                <button type="button" style={{ marginLeft: "0.5rem" }} onClick={() => setEditingTaskId(null)}>Cancel</button>
+                <button onClick={() => handleSaveTaskEdit(task.id)} className="bg-green-600 text-white font-bold px-5 py-2 rounded hover:bg-green-700 transition ml-1">
+                  Save
+                </button>
+                <button type="button" onClick={() => setEditingTaskId(null)} className="bg-gray-200 text-gray-800 px-5 py-2 rounded hover:bg-gray-300 font-bold transition ml-1">
+                  Cancel
+                </button>
               </div>
             ) : (
-              <div>
-                <strong style={{ fontSize: "1.04rem" }}>{task.title}</strong>
-                <span style={{
-                  padding: "0.15em 0.55em",
-                  marginLeft: "1em",
-                  borderRadius: 8,
-                  background: getStatusColor(task.status),
-                  color: "#222",
-                  fontWeight: "bold",
-                  fontSize: "0.85em",
-                  verticalAlign: "middle"
-                }}>
+              <div className="flex flex-wrap gap-2 items-center">
+                <strong className="text-lg">{task.title}</strong>
+                <span className="px-2 py-1 ml-2 rounded bg-indigo-100 text-indigo-700 font-semibold uppercase text-xs">
                   {task.status}
                 </span>
-                <button style={{ marginLeft: "1rem" }} onClick={() => handleEditTask(task)}>
+                <button className="ml-4 text-indigo-700 hover:underline text-sm" onClick={() => handleEditTask(task)}>
                   Edit
                 </button>
-                <button style={{ marginLeft: "0.5rem" }} onClick={() => handleDeleteTask(task.id)}>
+                <button className="ml-2 text-red-500 hover:underline text-sm" onClick={() => handleDeleteTask(task.id)}>
                   Delete
                 </button>
-                <span style={{ float: "right", color: "#888", fontSize: "0.9em" }}>
+                <span className="ml-auto text-gray-500 text-xs font-mono">
                   {task.estimated}h est, {task.actual}h actual
                 </span>
               </div>
             )}
-            <div style={{ marginTop: "0.2em", marginBottom: "0.5em" }}>
-              <span style={{ color: "#444" }}>{task.description || <em>No description</em>}</span>
-            </div>
+            <div className="mt-2 text-gray-700">{task.description || <em>No description</em>}</div>
 
             <SubTaskList
               subTasks={task.subTasks}
@@ -268,7 +276,7 @@ export default function Tasks() {
   );
 }
 
-// SubTaskList with inline ADD and EDIT
+// SubTaskList with inline ADD and EDIT (add the className above to every input/select here as well!)
 function SubTaskList({
   subTasks,
   onUpdateSubTasks,
@@ -285,19 +293,18 @@ function SubTaskList({
     e.preventDefault();
     if (!stForm.title.trim()) return setError("Title required");
     if (Number(stForm.estimated) < 0 || Number(stForm.actual) < 0) return setError("Hours cannot be negative");
-    onUpdateSubTasks([{ ...stForm, id: Date.now().toString(), estimated: Number(stForm.estimated) || 0, actual: Number(stForm.actual) || 0 },
+    onUpdateSubTasks([
+      { ...stForm, id: Date.now().toString(), estimated: Number(stForm.estimated) || 0, actual: Number(stForm.actual) || 0 },
       ...subTasks
     ]);
     setStForm({ title: "", estimated: "", actual: "" });
     setError("");
   }
-  // Begin edit
   function handleEditStart(st) {
     setEditingSubtask({ stId: st.id });
     setEditSubtaskForm({ title: st.title, estimated: st.estimated, actual: st.actual });
     setError("");
   }
-  // Save edit
   function handleEditSave(stId) {
     if (!editSubtaskForm.title.trim()) return setError("Title required");
     if (Number(editSubtaskForm.estimated) < 0 || Number(editSubtaskForm.actual) < 0) return setError("Hours cannot be negative");
@@ -308,22 +315,21 @@ function SubTaskList({
     setEditingSubtask({});
     setError("");
   }
-  // Delete subtask
   function handleDelete(stId) {
     onUpdateSubTasks(subTasks.filter(st => st.id !== stId));
   }
 
   return (
-    <div style={{ marginLeft: "1.4rem" }}>
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      <form onSubmit={handleAdd} style={{ marginTop: "0.5rem" }}>
+    <div className="ml-8">
+      {error && <div className="text-red-600 font-medium mb-2">{error}</div>}
+      <form onSubmit={handleAdd} className="my-2 flex flex-wrap gap-2 items-end">
         <input
           type="text"
           required
           placeholder="Subtask Title"
           value={stForm.title}
           onChange={e => setStForm({ ...stForm, title: e.target.value })}
-          style={{ marginRight: "0.5rem", width: 120 }}
+          className="border border-gray-300 bg-white rounded px-3 py-2 w-36 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
         />
         <input
           type="number"
@@ -331,7 +337,7 @@ function SubTaskList({
           min="0"
           value={stForm.estimated}
           onChange={e => setStForm({ ...stForm, estimated: e.target.value })}
-          style={{ width: "5rem", marginRight: "0.5rem" }}
+          className="border border-gray-300 bg-white rounded px-3 py-2 w-24 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
         />
         <input
           type="number"
@@ -339,44 +345,50 @@ function SubTaskList({
           min="0"
           value={stForm.actual}
           onChange={e => setStForm({ ...stForm, actual: e.target.value })}
-          style={{ width: "5rem", marginRight: "0.5rem" }}
+          className="border border-gray-300 bg-white rounded px-3 py-2 w-24 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
         />
-        <button type="submit">Add Subtask</button>
+        <button type="submit" className="bg-indigo-500 text-white font-bold px-3 py-2 rounded hover:bg-indigo-600 transition">
+          Add Subtask
+        </button>
       </form>
-      <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
+      <ul className="space-y-2 mt-2">
         {subTasks.length === 0 && <li><em>No subtasks yet.</em></li>}
         {subTasks.map(st =>
           editingSubtask.stId === st.id ? (
-            <li key={st.id} style={{ background: "#f0f0f0", marginTop: 4 }}>
+            <li key={st.id} className="bg-indigo-50 rounded p-2 flex flex-wrap gap-2 items-center">
               <input
                 required
                 type="text"
                 value={editSubtaskForm.title}
                 onChange={e => setEditSubtaskForm(f => ({ ...f, title: e.target.value }))}
-                style={{ marginRight: "0.5rem", width: 120 }}
+                className="border border-gray-300 bg-white rounded px-3 py-2 w-36 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
               />
               <input
                 type="number"
                 min="0"
                 value={editSubtaskForm.estimated}
                 onChange={e => setEditSubtaskForm(f => ({ ...f, estimated: e.target.value }))}
-                style={{ width: "5rem", marginRight: "0.5rem" }}
+                className="border border-gray-300 bg-white rounded px-3 py-2 w-24 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
               />
               <input
                 type="number"
                 min="0"
                 value={editSubtaskForm.actual}
                 onChange={e => setEditSubtaskForm(f => ({ ...f, actual: e.target.value }))}
-                style={{ width: "5rem", marginRight: "0.5rem" }}
+                className="border border-gray-300 bg-white rounded px-3 py-2 w-24 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
               />
-              <button onClick={() => handleEditSave(st.id)}>Save</button>
-              <button type="button" style={{ marginLeft: 4 }} onClick={() => setEditingSubtask({})}>Cancel</button>
+              <button onClick={() => handleEditSave(st.id)} className="bg-green-600 text-white font-bold px-3 py-2 rounded hover:bg-green-700 transition">
+                Save
+              </button>
+              <button type="button" className="bg-gray-200 text-gray-800 px-3 py-2 rounded hover:bg-gray-300 font-bold transition" onClick={() => setEditingSubtask({})}>
+                Cancel
+              </button>
             </li>
           ) : (
-            <li key={st.id} style={{ marginTop: 4 }}>
-              {st.title} <span style={{ color: "#888" }}>({st.estimated}h est, {st.actual}h act)</span>
-              <button style={{ marginLeft: "1rem" }} onClick={() => handleEditStart(st)}>Edit</button>
-              <button style={{ marginLeft: "0.5rem" }} onClick={() => handleDelete(st.id)}>Delete</button>
+            <li key={st.id} className="flex flex-wrap gap-2 items-center">
+              {st.title} <span className="text-gray-500">({st.estimated}h est, {st.actual}h act)</span>
+              <button className="ml-2 text-indigo-700 hover:underline text-sm" onClick={() => handleEditStart(st)}>Edit</button>
+              <button className="ml-2 text-red-500 hover:underline text-sm" onClick={() => handleDelete(st.id)}>Delete</button>
             </li>
           )
         )}
@@ -385,7 +397,7 @@ function SubTaskList({
   );
 }
 
-// Status color (for minimal highlight)
+// Status color function (not used because we use background badges in the main card now)
 function getStatusColor(status) {
   switch (status) {
     case "Open": return "#f1e3ff";

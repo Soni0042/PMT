@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="flex bg-gray-50 min-h-screen">
       <Sidebar />
-      <main style={{ marginLeft: 200, padding: 24, flexGrow: 1 }}>
+      <main className="flex-1 p-6 ml-[200px] text-left overflow-auto">
         <Routes>
           <Route path="/" element={<Navigate to="/projects" />} />
           <Route path="/dashboard" element={<Dashboard />} />

@@ -27,9 +27,9 @@ export default function StatusBoard() {
   return (
     <div>
       <h2 className="font-bold text-2xl mb-7 text-left">Project Status Board</h2>
-      <div className="flex gap-7 items-start overflow-x-auto pb-3">
+      <div className="grid gap-7 md:grid-cols-2 xl:grid-cols-3">
         {projectsByStatus.map(group => (
-          <div key={group.status} className="min-w-[270px] max-w-xs w-full bg-gray-50 border border-gray-200 rounded-2xl shadow-md p-4 flex flex-col">
+          <div key={group.status} className="bg-gray-50 border border-gray-200 rounded-2xl shadow-md p-4 flex flex-col min-h-[220px]">
             <h3 className="text-center font-semibold text-lg mb-5 text-indigo-950 tracking-wide">
               {group.status}
             </h3>

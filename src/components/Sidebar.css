@@ -3,7 +3,7 @@
 /* Sidebar container */
 .sidebar {
   width: 200px;
-  background: #222d3a;
+  background: #312e81;         /* <-- New modern Indigo */
   color: white;
   height: 100vh;
   min-height: 100vh;
@@ -14,6 +14,7 @@
   box-shadow: 2px 0 8px #0001;
   z-index: 30;
 }
+
 
 /* Title/logo */
 .sidebar h1 {

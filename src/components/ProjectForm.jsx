@@ -148,52 +148,69 @@ export default function ProjectForm({ onAddProject, initial }) {
 
       {/* ATTACHMENTS */}
       <div>
-        <label className="block text-sm font-semibold text-indigo-900 mb-1">Attachments</label>
-        <input
-          type="file"
-          multiple
-          onChange={handleFileChange}
-          className="block w-full mt-1"
-        />
-        {/* New (unsaved) attachments */}
-        {newAttachments.length > 0 && (
-          <ul className="mt-3 rounded-lg bg-indigo-50 p-3">
-            {newAttachments.map((file, idx) => (
-              <li key={idx} className="flex items-center gap-2 mb-1">
-                <span className="truncate">{file.name}</span>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveAttachment(idx)}
-                  className="text-xs text-red-600 font-bold underline"
-                >Remove</button>
-              </li>
-            ))}
-          </ul>
-        )}
-        {/* Existing attachments, if editing */}
-        {form.attachments && form.attachments.length > 0 && (
-          <ul className="mt-2 rounded-lg bg-indigo-50 p-3">
-            {form.attachments.map((file, idx) => (
-              <li key={file.name+idx} className="flex items-center gap-2 mb-1">
-                <a
-                  href={file.data}
-                  download={file.name}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-indigo-700 underline text-xs truncate"
-                >
-                  {file.name}
-                </a>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveExistingAttachment(idx)}
-                  className="text-xs text-red-600 font-bold underline"
-                >Remove</button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+  <label className="block text-sm font-semibold text-indigo-900 mb-1">Attachments</label>
+  <div className="flex items-center gap-4">
+    <label
+      htmlFor="project-attachments"
+      className="inline-block bg-indigo-600 text-white px-5 py-2 rounded-lg cursor-pointer font-bold hover:bg-indigo-700 transition"
+    >
+      Choose Files
+      <input
+        id="project-attachments"
+        type="file"
+        multiple
+        onChange={handleFileChange}
+        className="hidden"
+      />
+    </label>
+    <span className={`text-sm ${newAttachments.length ? "text-indigo-700 font-medium" : "text-gray-400 italic"}`}>
+      {newAttachments.length === 0
+        ? "No files chosen"
+        : newAttachments.map(f => f.name).join(", ")
+      }
+    </span>
+  </div>
+
+  {/* New attachments file list */}
+  {newAttachments.length > 0 && (
+    <ul className="mt-3 rounded-lg bg-indigo-50 p-3">
+      {newAttachments.map((file, idx) => (
+        <li key={idx} className="flex items-center gap-2 mb-1">
+          <span className="text-indigo-900 font-semibold truncate">{file.name}</span>
+          <button
+            type="button"
+            onClick={() => handleRemoveAttachment(idx)}
+            className="text-xs text-red-600 font-bold underline"
+          >Remove</button>
+        </li>
+      ))}
+    </ul>
+  )}
+
+  {/* Existing attachments (if editing) */}
+  {form.attachments && form.attachments.length > 0 && (
+    <ul className="mt-2 rounded-lg bg-indigo-50 p-3">
+      {form.attachments.map((file, idx) => (
+        <li key={file.name+idx} className="flex items-center gap-2 mb-1">
+          <a
+            href={file.data}
+            download={file.name}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-indigo-700 underline text-xs truncate"
+          >
+            {file.name}
+          </a>
+          <button
+            type="button"
+            onClick={() => handleRemoveExistingAttachment(idx)}
+            className="text-xs text-red-600 font-bold underline"
+          >Remove</button>
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
 
       <div className="flex gap-4 mt-4">
         <button

@@ -1,7 +1,7 @@
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from "chart.js";
-import { CSVLink } from "react-csv";
+import { exportToXLSX } from "../utils/exportXLSX"; // <------ NEW
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend);
 
@@ -61,14 +61,12 @@ export default function Dashboard() {
   return (
     <div className="p-2 md:p-6 max-w-7xl mx-auto">
       <h2 className="text-3xl font-extrabold mb-10 text-left tracking-tight">Analytics Dashboard</h2>
-
       {/* KPI CARDS */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
         <KpiCard value={projectsCount} label="Projects" color="indigo" />
         <KpiCard value={tasksCount} label="Tasks" color="green" />
         <KpiCard value={resourcesCount} label="Resources" color="blue" />
       </div>
-
       {/* CHARTS */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-10">
         <div className="bg-white p-7 rounded-2xl shadow-xl flex flex-col items-center">
@@ -104,7 +102,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-
       <ExportSection projects={projects} tasks={tasks} resources={resources} />
     </div>
   );
@@ -126,32 +123,30 @@ function KpiCard({ value, label, color }) {
   );
 }
 
+// ---- CHANGED EXPORT SECTION BELOW ----
 function ExportSection({ projects, tasks, resources }) {
   return (
     <div className="bg-gray-50 rounded-2xl shadow p-8 max-w-2xl mx-auto">
-      <h3 className="font-semibold mb-3 text-lg text-indigo-900">Export Data as CSV</h3>
+      <h3 className="font-semibold mb-3 text-lg text-indigo-900">Export Data as XLSX</h3>
       <div className="flex flex-wrap gap-6">
-        <CSVLink
-          data={projects}
-          filename="projects.csv"
+        <button
+          onClick={() => exportToXLSX(projects, "projects.xlsx")}
           className="inline-block bg-indigo-600 text-white px-5 py-2 rounded-lg hover:bg-indigo-700 transition shadow"
         >
           Export Projects
-        </CSVLink>
-        <CSVLink
-          data={tasks}
-          filename="tasks.csv"
+        </button>
+        <button
+          onClick={() => exportToXLSX(tasks, "tasks.xlsx")}
           className="inline-block bg-green-600 text-white px-5 py-2 rounded-lg hover:bg-green-700 transition shadow"
         >
           Export Tasks
-        </CSVLink>
-        <CSVLink
-          data={resources}
-          filename="resources.csv"
+        </button>
+        <button
+          onClick={() => exportToXLSX(resources, "resources.xlsx")}
           className="inline-block bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition shadow"
         >
           Export Resources
-        </CSVLink>
+        </button>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 @import "tailwindcss";
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light dark;
@@ -25,8 +25,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  /* REMOVE: display: flex; flex-direction: column; */
-  /* Let your React app control the layout */
+  
 }
 
 h1 {
