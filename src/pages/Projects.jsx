@@ -143,6 +143,18 @@ export default function Projects() {
               <span><strong>Department:</strong> {proj.department}</span>
               <span><strong>Sponsor:</strong> {proj.sponsor || '-'}</span>
               <span><strong>Duration:</strong> {proj.durationStart ?? "?"} – {proj.durationEnd ?? "?"}</span>
+              {/* Skillsets */}
+              <span>
+                <strong>Skills:</strong>{" "}
+                {proj.skillsets && proj.skillsets.length > 0
+                  ? proj.skillsets.map(skill => (
+                    <span key={skill} className="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded mr-1">
+                      {skill}
+                    </span>
+                  ))
+                  : "-"
+                }
+              </span>
             </div>
             {proj.attachments && proj.attachments.length > 0 && (
               <div className="mt-1">

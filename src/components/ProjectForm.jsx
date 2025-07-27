@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-// Skill and status options
+// Skill options and status options
 const SKILL_OPTIONS = [
   "React",
   "Node.js",
@@ -30,28 +30,50 @@ const emptyForm = {
   durationEnd: "",
   sponsor: "",
   attachments: [],
-  skillsets: [],
+  skillsets: [],               // Array holding skills added one-by-one
 };
 
 export default function ProjectForm({ onAddProject, initial }) {
   const [form, setForm] = useState(initial || emptyForm);
   const [newAttachments, setNewAttachments] = useState([]);
+  const [newSkill, setNewSkill] = useState(""); // For adding next skill
 
   useEffect(() => {
     setForm(initial || emptyForm);
     setNewAttachments([]);
+    setNewSkill("");
   }, [initial]);
 
+  // Generic input change handler for most fields
   const handleChange = (e) =>
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
-  // Skillset: single-select (stored as [skill])
-  const handleSkillChange = (e) => {
-    const value = e.target.value;
-    setForm(f => ({ ...f, skillsets: value ? [value] : [] }));
+  // Add one skill at a time from dropdown
+  const handleAddSkill = () => {
+    const skill = newSkill.trim();
+    if (skill && !form.skillsets.includes(skill) && SKILL_OPTIONS.includes(skill)) {
+      setForm(f => ({ ...f, skillsets: [...f.skillsets, skill] }));
+      setNewSkill("");
+    }
   };
 
-  // File handling
+  // Remove a skill tag
+  const handleRemoveSkill = (skillToRemove) => {
+    setForm(f => ({
+      ...f,
+      skillsets: f.skillsets.filter(skill => skill !== skillToRemove)
+    }));
+  };
+
+  // Add skill on Enter key pressed
+  const handleSkillInputKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddSkill();
+    }
+  };
+
+  // File handling for attachments
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     files.forEach((file) => {
@@ -84,7 +106,7 @@ export default function ProjectForm({ onAddProject, initial }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Main required fields
+    // Validate required fields
     if (
       !form.name.trim() ||
       !form.description.trim() ||
@@ -93,12 +115,12 @@ export default function ProjectForm({ onAddProject, initial }) {
       !form.durationStart ||
       !form.durationEnd ||
       !form.sponsor.trim() ||
-      !form.skillsets[0]
+      form.skillsets.length === 0
     ) {
-      alert("Please fill out all required fields.");
+      alert("Please fill out all required fields and add at least one skill.");
       return;
     }
-    // Dates logic
+    // Dates validation
     const { durationStart, durationEnd } = form;
     if (durationStart && durationEnd && durationEnd < durationStart) {
       alert("End date must be after start date.");
@@ -113,14 +135,15 @@ export default function ProjectForm({ onAddProject, initial }) {
     });
     setForm(emptyForm);
     setNewAttachments([]);
+    setNewSkill("");
   };
 
   const handleCancel = () => {
     setForm(emptyForm);
     setNewAttachments([]);
+    setNewSkill("");
   };
 
-  // For red asterisk
   const Star = <span className="text-red-600">*</span>;
 
   return (
@@ -244,28 +267,57 @@ export default function ProjectForm({ onAddProject, initial }) {
         />
       </div>
 
-      {/* Skillset Dropdown */}
+      {/* Skillset - Add Another Skill Feature */}
       <div>
         <label className="block text-sm font-semibold text-indigo-900 mb-1">
           Skillset Required {Star}
         </label>
-        <select
-          name="skillsets"
-          value={form.skillsets[0] || ""}
-          onChange={handleSkillChange}
-          required
-          className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-indigo-400 transition"
-        >
-          <option value="">Select a skill</option>
-          {SKILL_OPTIONS.map((skill) => (
-            <option key={skill} value={skill}>
-              {skill}
-            </option>
+
+        {/* Selected skills as tags */}
+        <div className="flex flex-wrap gap-2 mb-2">
+          {form.skillsets.map((skill) => (
+            <div
+              key={skill}
+              className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded flex items-center gap-2"
+            >
+              <span>{skill}</span>
+              <button
+                type="button"
+                onClick={() => handleRemoveSkill(skill)}
+                className="text-indigo-600 hover:text-indigo-900 font-bold"
+                aria-label={`Remove skill ${skill}`}
+              >
+                ×
+              </button>
+            </div>
           ))}
-        </select>
+        </div>
+
+        {/* Add skill dropdown + Add button */}
+        <div className="flex gap-2">
+          <select
+            value={newSkill}
+            onChange={(e) => setNewSkill(e.target.value)}
+            onKeyDown={handleSkillInputKeyDown}
+            className="border border-gray-300 rounded-lg px-3 py-2 w-full focus:ring-2 focus:ring-indigo-400 transition"
+          >
+            <option value="">Select a skill to add</option>
+            {SKILL_OPTIONS.filter(skill => !form.skillsets.includes(skill)).map(skill => (
+              <option key={skill} value={skill}>{skill}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={handleAddSkill}
+            disabled={!newSkill}
+            className={`px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition ${!newSkill ? "opacity-50 cursor-not-allowed" : ""}`}
+          >
+            Add
+          </button>
+        </div>
       </div>
 
-      {/* Attachments*/}
+      {/* Attachments */}
       <div>
         <label className="block text-sm font-semibold text-indigo-900 mb-1">
           Attachments
@@ -296,14 +348,12 @@ export default function ProjectForm({ onAddProject, initial }) {
               : newAttachments.map((f) => f.name).join(", ")}
           </span>
         </div>
-        {/* New attachments */}
+        {/* New attachments list */}
         {newAttachments.length > 0 && (
-          <ul className="mt-3 rounded-lg bg-indigo-50 p-3">
+          <ul className="mt-3 rounded-lg bg-indigo-50 p-3 max-h-40 overflow-auto">
             {newAttachments.map((file, idx) => (
               <li key={idx} className="flex items-center gap-2 mb-1">
-                <span className="text-indigo-900 font-semibold truncate">
-                  {file.name}
-                </span>
+                <span className="text-indigo-900 font-semibold truncate">{file.name}</span>
                 <button
                   type="button"
                   onClick={() => handleRemoveAttachment(idx)}
@@ -315,9 +365,9 @@ export default function ProjectForm({ onAddProject, initial }) {
             ))}
           </ul>
         )}
-        {/* Existing attachments */}
+        {/* Existing attachments list */}
         {form.attachments && form.attachments.length > 0 && (
-          <ul className="mt-2 rounded-lg bg-indigo-50 p-3">
+          <ul className="mt-2 rounded-lg bg-indigo-50 p-3 max-h-40 overflow-auto">
             {form.attachments.map((file, idx) => (
               <li key={file.name + idx} className="flex items-center gap-2 mb-1">
                 <a
@@ -342,7 +392,7 @@ export default function ProjectForm({ onAddProject, initial }) {
         )}
       </div>
 
-      {/* Action Buttons */}
+      {/* Form action buttons */}
       <div className="flex gap-4 mt-4">
         <button
           type="submit"
